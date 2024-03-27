@@ -1,27 +1,27 @@
 {
-  "defaultPrice": 3.0,
+  "defaultPrice": 8.0,
   "defaultCurrency": "USD",
   "currentCountry": "USA",
-  "lastUpdateDateAndTime": "20240320190349",
+  "lastUpdateDateAndTime": "20240321160324",
   "pricesStorage": {
-    "20240320": [
+    "20240321": [
       {
         "price": 3.0,
-        "startTime": "183000",
+        "startTime": "180000",
         "durationMinutes": 60
       },
       {
         "price": 9.0,
-        "startTime": "093000",
+        "startTime": "090000",
         "durationMinutes": 30
       },
       {
         "price": 55.0,
-        "startTime": "100100",
+        "startTime": "100000",
         "durationMinutes": 1
       }
     ],
-    "20240322": [
+    "20240323": [
       {
         "price": 88.0,
         "startTime": "123000",

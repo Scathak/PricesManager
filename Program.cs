@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Logging; 
 using Microsoft.Extensions.DependencyInjection;
 using PricesManager;
+using ExternalInterfaces;
 
 internal partial class Program
 {
-
     private static void Main(string[] args)
     {
         var loggingConfiguration = new ConfigurationBuilder()
@@ -33,19 +33,19 @@ internal partial class Program
         var dynamicPrices = new Container();
     
         dynamicPrices.SetDefaultCurrency("USD");
-        dynamicPrices.SetDefaultPrice(3.0M);
+        dynamicPrices.SetDefaultPrice(8.0M);
         dynamicPrices.SetCurrentCountry("USA");
         dynamicPrices.OpenNewDate(DateTimeService.GetCurrentDate());
         var dateToWrite = DateTimeService.GetCurrentDate(); 
         dynamicPrices.AddPriceOnExistingDate(
             dateToWrite, 
-            new priceValueWithPeriod() {price = 3.0M, durationMinutes = 60, startTime = "183000" });
+            new priceValueWithPeriod() {price = 3.0M, durationMinutes = 60, startTime = "180000" });
         dynamicPrices.AddPriceOnExistingDate(
             dateToWrite, 
-            new priceValueWithPeriod() {price = 9.0M, durationMinutes = 30, startTime = "093000" });       
+            new priceValueWithPeriod() {price = 9.0M, durationMinutes = 30, startTime = "090000" });       
         dynamicPrices.AddPriceOnExistingDate(
             dateToWrite, 
-            new priceValueWithPeriod() {price = 55.0M, durationMinutes = 1, startTime = "100100" });     
+            new priceValueWithPeriod() {price = 55.0M, durationMinutes = 1, startTime = "100000" });     
         
         logger.Log(LogLevel.Information, eventInformationId++, $"The new date {DateTimeService.GetNiceDate(dateToWrite)} is open for adding prices");
 
@@ -63,11 +63,18 @@ internal partial class Program
         var MinutesPrices = priceReader.GetArrayMinutesPricesOnDate(dateToPrint);
 
         if(MinutesPrices != null) {
-            foreach(var priceItem in MinutesPrices) Console.Write(priceItem + " ,");
+          //  foreach(var priceItem in MinutesPrices) Console.Write(priceItem + " ,");
         } else {
             logger.Log(LogLevel.Error,eventErrorId++, $"There is no prices for this date: {DateTimeService.GetNiceDate(dateToPrint)}");
         }
 
+        var customIntervalPrices = priceReader.GetArrayPricesOnDate(dateToPrint, intervalInMinutes: 30);
+        if(MinutesPrices != null) {
+            foreach( var priceItem in customIntervalPrices) Console.Write(priceItem + " ,");
+        } else{
+            logger.Log(LogLevel.Error,eventErrorId++, $"There is no prices for this date: {DateTimeService.GetNiceDate(dateToPrint)}");
+        }
+        
         var fileName = "testjson.json";
         var FileWriter = new FileWriter(fileName);
         FileWriter.WriteAll(dynamicPrices);
@@ -87,5 +94,8 @@ internal partial class Program
                          dynamicPrices.GetDefaultCurrency());
         Console.WriteLine("Price on current minute: " + priceReader.GetCurrentPrice()+
                          dynamicPrices.GetDefaultCurrency());
+
+        var test = new CacheReader(priceReader);
+        var test2 = test.GetJSON(dateToPrint, intervalInMinutes: 30);
     }
 }

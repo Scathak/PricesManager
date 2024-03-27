@@ -246,6 +246,7 @@ namespace PricesManager
 
 public interface IGetPrice
 {
+
 	public decimal GetPriceOnTimeStamp(string date, string time);
 	public decimal GetCurrentPrice();
 	public decimal[] GetArrayMinutesPricesOnDate(string date);
@@ -253,12 +254,15 @@ public interface IGetPrice
 
 public class PriceReader : IGetPrice
 {
-	private Container _pricesContainer;
+    private Container _pricesContainer;
+
 	public PriceReader(Container pricesContainer){
+       
+       
 		_pricesContainer = pricesContainer;
 	}
 	public decimal GetPriceOnTimeStamp(string date, string time){
-		return (decimal)_pricesContainer.GetPriceOnDateTime( date, time );
+		return (decimal)_pricesContainer.GetPriceOnDateTime(date, time);
 	}
 	public decimal GetCurrentPrice(){
 		return (decimal)_pricesContainer.GetPriceOnDateTime( DateTimeService.GetCurrentDate(), DateTimeService.GetCurrentTime() );
@@ -286,6 +290,11 @@ public class PriceReader : IGetPrice
 		}
 		return output;
 	}
+    public decimal[] GetArrayPricesOnDate(string date, int intervalInMinutes){
+        var pricesCollection = GetArrayMinutesPricesOnDate(date);
+
+        return pricesCollection.Where((pricesCollection, index) => (index % intervalInMinutes) == 0).ToArray();
+    }
 } 
 }
 #pragma warning restore CS8618
